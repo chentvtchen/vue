@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <button v-on:click="increase(2, $event)">Click Me!</button>
+        <button v-on:click="count++">Click Me!</button>
+        <p>{{ count }}</p>
+        <p>{{ count > 5 ? "greater than 5" : "less than 5"}}</p>
+        <p v-on:mousemove="setXY">
+            x / y : {{ x }} / {{ y }}
+            <span v-on:mousemove.stop.prevent>Stop</span>
+        </p>
+        <input v-on:keyup.enter="write">
+        <!-- 按空格和esc才会触发 -->
+        <input v-on:keyup.enter.space.esc="write">
+        <p v-html="writeWord"></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                count: 0,
+                x: 0,
+                y: 0,
+                writeWord: ''
+            },
+            methods: {
+                increase: function(step, event){
+                    this.count += step;
+                },
+                setXY: function(event) {
+                    this.x = event.clientX;
+                    this.y = event.clientY;
+                },
+                write: function(event) {
+                    this.writeWord += event.target.value + '<br/>';
+                }
+            }
+        })
+    </script>
+</body>
+</html>

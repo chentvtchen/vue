@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>数据绑定</title>
+</head>
+<body>
+    <div id="app">
+        <input v-model = "name">
+        <p>{{ name }}</p>
+    </div>
+    <div id="app2">
+        <button v-on:click="count++">increase</button>
+        <button v-on:click="count--">decrease</button>
+        <button v-on:click="countSecon--">countSecon-decrease</button>
+        <p>{{ count }}</p>
+        <p>{{ countSecon }}</p>
+        <!-- 函数绑定的坏处就是改变countSecon，也会执行result函数，不管是哪个dom进行更改，都会执行这个函数 -->
+        <p>{{ result() | resultCom() }}</p>
+        <!-- 解决办法是conputed 和watch -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        // 双向数据绑定
+        new Vue({
+            el: '#app',
+            data: {
+                name: 'change'
+            },
+            methods: {
+                changeName: function(e) {
+                    this.name = e.target.value;
+                }
+            }
+        })
+
+        new Vue({
+            el : '#app2',
+            data : {
+                count : 0,
+                countSecon : 0
+            },
+            // 会分析函数和哪个参数有关，相关参数进行改变才会执行这个函数
+            // 同步代码，立即执行的
+            computed : {
+                resultCom : function() {
+                    console.log('computed');
+                    return this.count > 5 ? "greater than 5" : "less than 5";
+                }
+            },
+            // 监听已有属性，这个属性改变的话，就执行函数
+            // 异步代码
+            watch : {
+                count : function () {
+                    console.log('watch');
+                    // this指向vue实例
+                    var vm = this;
+                    setTimeout(function() {
+                        vm.count = 0;
+                    }, 2000);
+                }
+            }
+            ,
+            methods : {
+                result : function() {
+                    console.log('methods');
+                    return this.count > 5 ? "greater than 5" : "less than 5";
+                }
+            }
+        })
+    </script>
+</body>
+</html>

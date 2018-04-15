@@ -1,0 +1,100 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态改变类名和样式</title>
+    <style>
+        .demo {
+            width: 100px;
+            height: 100px;
+            margin-right: 100px;
+            display: inline-block;
+            background-color: gray;
+        }
+        .demo.red {
+            background-color: red;
+        }
+        .demo.blue {
+            background-color: blue;
+        }
+        .demo.green {
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 通过类名改变样式 -->
+        <!-- 计算属性 -->
+        <div class="demo"
+             @click = "attach = !attach" 
+              :class = "divClass" 
+        >
+         <!-- :class = "{red : attach, blue : !attach}"  -->
+       </div>
+       <!-- 直接绑定在class上面 -->
+        <div class="demo"
+             @click = "attach = !attach"
+             :class = "{red : attach}"
+        ></div>
+        <!-- 数组绑定 -->
+        <div class="demo"
+             @click = "attach = !attach"
+             :class = "[color, {blue : !attach}]"
+        ></div>
+        <!-- 绑定数据属性 -->
+        <div class="demo"
+             @click = "attach = !attach"
+             :class = "color"
+        ></div>
+        <p>通过输入颜色改变最后一个div的颜色，可输入：blue,green,red,默认为gray</p>
+        <input v-model = "color">
+    </div>
+       
+    <!-- 动态改变样式 -->
+    <div id="app2">
+        <div class="demo" :style="divStyle"></div>
+        <p>
+            <input v-model = "color" placeholder="enter color">
+            <input v-model = "width" placeholder="enter width">
+            <input v-model = "height" placeholder="enter height">
+        </p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el : '#app',
+            data : {
+                attach : false,
+                color : 'red'
+            },
+            computed : {
+                divClass : function () {
+                    return {
+                        red : this.attach,
+                        blue : !this.attach
+                    }
+                }
+            }
+        })
+        new Vue({
+            el : '#app2',
+            data : {
+                color : 'green',
+                width : 100,
+                height : 100
+            },
+            computed : {
+                divStyle : function () {
+                    return {
+                        backgroundColor : this.color,
+                        width : this.width + 'px',
+                        height : this.height + 'px'
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+</html>

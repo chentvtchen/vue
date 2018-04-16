@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>简要登录框提示</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    简要登录框提示
+    <div id="app">
+        <div class="row">
+            <input v-model="name" placeholder="请输入用户名">
+            <span>{{ nameErrInfo }}</span>
+        </div>
+        <div class="row">
+            <input type="password" v-model="pass" placeholder="请输入密码">
+            <span>{{ passErrInfo }}</span>
+        </div>
+        <button @click="submit">提交</button>
+    </div>
+    <!-- vue会复用input框，需要加上key值 -->
+    <div id="app2">
+        <template v-if="show">
+            <p>请输入用户名</p>
+            <input placeholder="请输入用户名" key="name">
+        </template>
+        <template v-else>
+            <p>请输入密码</p>
+            <input placeholder="请输入密码" key="pass">
+        </template>
+        <button @click="show = !show">switch</button>
+    </div>
+    
+    <script>
+        new Vue({
+            el : '#app',
+            data : {
+                name : '',
+                pass : '',
+                nameErrInfo : '',
+                passErrInfo : '',
+
+            },
+            methods : {
+                submit : function () {
+                    console.log('提交')
+                    this.nameErrInfo = !this.name ? '请输入用户名!' : '';
+                    this.passErrInfo = !this.pass ? '请输入密码!' : '';
+                }
+            }
+        })
+        new Vue({
+            el : '#app2',
+            data : {
+                show : true
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,3 +1,7 @@
+### 兼容性（ie8以上）
+因为vue用的是es5，ie8以及ie8一下使用的是es3语法
+### 思想
+使用虚拟dom，数据进行改变的话和虚拟dom进行比对，如果有差别的话再进行渲染
 ### 属性
 ##### v-once: 值渲染一次，不再重新绑定
 ##### v-on: 绑定事件
@@ -16,9 +20,33 @@ v-show没有渲染的的节点是用display:none的形式在页面上面，v-if�
  如果变量是通过 `$` 或者 `_` 命名的，vue是不会把这个变量代理到最顶层，不能通过`this.$someThing`获取到，需要通过`this.$data.$someThing`获取到<br>
  `this.$data = this.data`
  ##### ref属性
-``` javascript
+``` HTML
 <button ref="myButton"></button>
 通过.$refs.myButton找到原生dom节点
 ```
-### 兼容性（ie8以上）
-因为vue用的是es5，ie8以及ie8一下使用的是es3语法
+##### vue实际挂载的两种方法
+`el : '#app'`，vue实例生成的时候就挂载上去<br>
+`vm1.$mount('#app')`,实例创建完再进行挂载（用在dom节点还没有生成或者不知道vue实例应该挂载到哪里的时候）<br>
+##### template模板渲染 
+``` javascript
+var vm3 = new Vue({
+    template : '<h1>hello world</h1>'
+})
+//把vm3里面渲染成真实dom
+vm3.$mount();
+document.getElementById('app2').appendChild(vm3.$el);
+document.getElementById('app3').appendChild(vm3.$el);
+// 通过new vue()实例的模板只能挂载到一个点上面,也就是只有app2上面渲染了模板
+```
+##### 模板创建
+``` javascript
+Vue.component('hello', {
+    template : '<h1>hello</h1>'
+})
+//模板使用方法
+<hello></hello>
+```
+### vue生命周期（重要）
+[例子解说](lifeCycle.html)
+如果el和template同时存在的话，就会编译template，忽略el了
+![vue生命周期](https://vuejs.org/images/lifecycle.png)

@@ -1,0 +1,59 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue的生命周期</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>    
+</head>
+<body>
+    <div id="app">
+        <p>{{ title }}</p>
+        <!-- change先调用beforeUpdate，再调用updated -->
+        <button @click="title = 'update'">change</button>
+        <!-- destory先调用beforeDestory，再调用destoryed -->
+        <button @click="destory">destory</button>
+    </div>
+    <script>
+        var app = new Vue({
+            el : '#app',
+            data : {
+                title : 'this is vue life cycle'
+            },
+            // 数据、方法、事件的初始化
+            beforeCreate : function () {
+                console.log('beforeCreate');
+            },
+            // 进行数据绑定
+            created : function () {
+                console.log('created');
+            },
+            // 看一下el和template应该编译哪个模板
+            beforeMount : function () {
+                console.log('beforeMount');
+            },
+            // 编译好的模板渲染到真实的html dom节点里面
+            mounted : function () {
+                console.log('Mounted');
+            },
+            beforeUpdate : function () {
+                console.log('beforeUpdate');
+            },
+            updated : function () {
+                console.log('updated');
+            },
+            beforeDestroy : function () {
+                console.log('beforeDestroy');
+            },
+            destroyed : function () {
+                console.log('destroyed');
+            },
+            methods : {
+                destory : function () {
+                    this.$destroy();
+                }
+            }
+        })
+    </script>
+</body>
+</html>

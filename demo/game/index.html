@@ -1,0 +1,183 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>打怪小游戏</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="js/vue.js"></script>
+</head>
+
+<body>
+    <div id="app" class="container my-game">
+        <!-- 两方血条 -->
+        <section class="row">
+            <div class="col-md-6 text-center">
+                <h1>你的</h1>
+                <div class="progress">
+                    <div class="progress-bar  progress-bar-success" role="progressbar" :aria-valuenow="playerHealth" aria-valuemin="0" :aria-valuemax="100"
+                        :style="{width : playerHealth + '%'}">
+                        {{  playerHealth }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-center">
+                <h1>怪物</h1>
+                <div class="progress">
+                    <div class="progress-bar  progress-bar-success" role="progressbar" :aria-valuenow="monsterHealth" aria-valuemin="0" aria-valuemax="100"
+                        :style="{width : monsterHealth + '%'}">
+                        {{  monsterHealth }}
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 游戏开始和打怪控制版面 -->
+        <section class="row control" v-if="!gameIsRunning">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button id="start-game" @click="newGame" type="button" class="btn btn-warning">开始游戏</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="row  control" v-else>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button id="attack" @click="attack" type="button" class="btn btn-danger">普通攻击</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="spe-attacl" @click="speAttack" type="button" class="btn btn-warning">特殊攻击</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="heal" @click="heal" type="button" class="btn btn-success">恢复</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="give-up" @click="giveUp" type="button" class="btn btn-default">放弃</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- 消息显示版面 -->
+        <section class="row" v-if="logs.length">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul>
+                        <li v-for="log in logs" class="alert alert-danger" :class="{success : log.isPlayer}">{{ log.damage }}</li>
+                         <!-- <li class="alert alert-danger">怪物打了你</li>
+                        <li class="alert alert-success">你打了怪物</li> -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        var app = new Vue({
+            el : '#app',
+            data : {
+                // 初始化玩家和怪物的血量
+                playerHealth : 100,
+                monsterHealth : 100,
+                gameIsRunning : false,
+                logs : []
+            },
+            computed : {
+            },
+            methods : {
+                // 开始游戏
+                newGame : function () {
+                    this.gameIsRunning = true;
+                    this.playerHealth = 100;
+                    this.monsterHealth = 100;
+                    this.logs = [];
+                },
+                // 攻击
+                attack : function () {
+                    var damage = this.calDamage(10,3);
+                    // 人对怪物的伤害
+                    this.monsterHealth -= damage;
+                    this.logs.unshift({
+                        isPlayer : true,
+                        damage : '你打了怪物一下，怪物受到了' + damage + '点伤害'
+                    })
+                    if(this.checkWin()){
+                        return;
+                    }
+                    //怪物对人的伤害
+                    this.monsterAttacks();
+                },
+                speAttack : function () {
+                    var damage = this.calDamage(20,10);
+                    this.monsterHealth -= damage;
+                    this.logs.unshift({
+                        isPlayer : true,
+                        damage : '你狠狠的打了怪物一下，怪物受到了' + damage + '点伤害'
+                    })
+                    if(this.checkWin()) {
+                        return;
+                    }
+                    //怪物对人的伤害
+                    this.monsterAttacks();
+                },
+                monsterAttacks : function () {
+                    var damage = this.calDamage(12,5)
+                    this.playerHealth -= damage;
+                    this.logs.unshift({
+                        isPlayer : false,
+                        damage : '怪物打了你一下，你受到了' + damage + '点伤害'
+                    })
+                    this.checkWin();
+                },
+                heal : function () {
+                    if(this.playerHealth <= 90) {
+                      this.playerHealth += 10;
+                    }else {
+                        this.playerHealth = 100;
+                    }
+                    this.logs.unshift({
+                        isPlayer : true,
+                        damage : '你恢复了十点血量'
+                    })
+                    this.monsterAttacks();
+                },
+                giveUp : function () {
+                    this.gameIsRunning = false;
+                },
+                calDamage : function (max, min) {
+                     // 产出一个0-10的随机数，取他与最小攻击数中的最大值
+                    return Math.max(Math.floor(Math.random() * max + 1), min);
+                },
+                checkWin : function () {
+                    var confirmStr = '',
+                        flag = false;
+                    if(this.monsterHealth <= 0) {
+                        confirmStr = '你赢了，需要开始一场新的游戏嘛~';
+                        flag = true;
+                    }else if(this.playerHealth <= 0) {
+                        confirmStr = '你输了，需要再来一场嘛~';
+                        flag = true;
+                    }
+                    if(flag) {
+                        if(confirm(confirmStr)) {
+                            this.newGame();
+                        }else {
+                            this.gameIsRunning = false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

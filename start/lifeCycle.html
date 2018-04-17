@@ -36,12 +36,14 @@
             mounted : function () {
                 console.log('Mounted');
             },
+            // 监听数据改变，数据发生变化的话
             beforeUpdate : function () {
                 console.log('beforeUpdate');
             },
             updated : function () {
                 console.log('updated');
             },
+            // ￥destroyed卸载vue实例,是把数据绑定，绑定的事件处理卸载了
             beforeDestroy : function () {
                 console.log('beforeDestroy');
             },

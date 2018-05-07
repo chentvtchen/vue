@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>多功能输入框</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <my-inp :title="tlt":reg="reg" :err="errMsg" :suc="sucMsg" @ret="retValue"></my-inp>
+        <show-ipt :qq="msg"></show-ipt>
+    </div>
+    <script>
+        const showIpt = {
+            template: `
+                <div>
+                    <span>qqNumber:{{qqNum}}</span>
+                </div>
+            `,
+            props: ['qq'],
+            computed: {
+                // 获取qq号
+                qqNum() {
+                    return this.qq.slice(0,7);
+                }
+            }
+        }
+        const myInp = {
+            template: `
+                <div>
+                    <label for="id">{{title}}</label>
+                    <input type="text" v-model="myText" @input="changeVal"/>
+                    <span :style="showMsg.flag ? 'color:lime' : 'color: red'">{{showMsg.value}}</span>
+                </div>
+            `,
+            data() {
+                return {
+                    myText: '',
+                    flag: false
+                }
+            },
+            methods: {
+                changeVal(e) {
+                    // 如果上面的格式对
+                    if(this.showMsg.flag) {
+                        // 触发my-input上面的事件
+                        this.$emit('ret', e.target.value);
+                    }
+                }
+            },
+            computed: {
+                showMsg() {
+                    if(this.reg === null || this.myText === ''){
+                        return {
+                            value: '',
+                            flag: false
+                        }
+                        return ''
+                    }else {
+                        return this.reg.test(this.myText) ? {value: this.suc, flag: true} : {value: this.err, flag: false};
+                    }
+                }
+            },
+            props: {
+                def: {
+                    type: String,
+                    defalut: ''
+                },
+                title: {
+                    type: String,
+                    defalut: ''
+                },
+                err: {
+                    type: String,
+                    defalut: 'NO'
+                },
+                suc: {
+                    type: String,
+                    defalut: 'OK'
+                },
+                reg: {
+                    type: RegExp,
+                    defalut: null
+                }
+                
+            }
+        }
+        new Vue({
+            el: '#app',
+            components: {
+                myInp,
+                showIpt
+            },
+            methods: {
+                retValue(value) {
+                    this.msg = value;
+                }
+            },
+            data() {
+                return {
+                    tlt: 'qq邮箱',
+                    reg: /@qq.com$/,
+                    errMsg: 'X 请输入以@qq.com结尾的邮箱',
+                    sucMsg: '√ 输入正确',
+                    msg: ''
+                }
+            }
+        })
+    </script>
+</body>
+</html>

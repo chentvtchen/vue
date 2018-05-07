@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>props的学习</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+</head>
+<body>
+        <div id="app">
+                <my-com :msg="title"></my-com>
+            </div>
+            <script>
+                const myCom = {
+                    template: `
+                    <div>
+                        {{msg}}
+                        <span @click="doit">{{msg}}</span>
+                    </div>
+                    `,
+                    props: {
+                        msg: {
+                            type: String
+                        }
+                    },
+                    methods: {
+                        doit() {
+                            // 这样子会让子组件影响父组件
+                            this.msg = 'lalal';
+                        }
+                    }
+                }
+                new Vue({
+                    el: '#app',
+                    components: {
+                        myCom
+                    },
+                    data() {
+                        return {
+                            title: '你问我来自哪个地方'
+                        }
+                    }
+                })
+            </script>
+</body>
+</html>

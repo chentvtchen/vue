@@ -1,0 +1,46 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>组件化学习</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <my-inp></my-inp>
+        <my-div></my-div>
+    </div>
+    <script>
+        // 全局组件
+        Vue.component('my-inp', {
+            template : `
+                        <div>
+                            <input type="text">
+                        </div>
+            `
+        })
+        new Vue({
+            el: '#app',
+            // 局部组件
+            components: {
+                myDiv: {
+                    template: `<div>welcome to this</div>`
+                }
+            }
+        })
+        // vue组件中是由这些东西构成的
+        const config = {
+                el,             //挂载点
+                data,           //当前组件下的数据，一定要是一个函数，这样子每个实例可以维护一份被返回对象的独立拷贝
+                props,          //使用prop进行数据传递，单向数据流（父 -> 子） 只能读
+                computed,       //计算属性，根据已有属性，计算出新的属性（data, prop）
+                watch,          //监听器data, props, computed
+                components,     //引入组件
+                template,       //当前vue的模板
+                methods,        //用来定义当前组建的方法
+                ...lifeCycle
+        }
+    </script>
+</body>
+</html>
